@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from "react";
+import {Container} from "reactstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+import Todos from "./Components/Todos";
+import TodoForm from "./Components/TodoForm"
+//import { useEffect, useState } from "react";
+
+
+const App = () => {
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    const localTodos = localStorage.getItem("todos");
+    console.log({localStorage});
+    if(localTodos){
+      setTodos(JSON.parse(localTodos));
+    }
+  }, []);
+
+  const addTodos = async todo => {
+    setTodos([...todos, todo])
+  };
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const markComplete = id => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  return(
+    <Container fluid>
+      <h1>Todo with local storage</h1>
+      <Todos todos={todos} markComplete = {markComplete}/>
+      <TodoForm addTodos={addTodos}/>
+    </Container>
   );
-}
+};
 
 export default App;
